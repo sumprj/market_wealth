@@ -1,0 +1,5 @@
+CREATE DATABASE market_arpan;
+CREATE USER 'sumit'@'localhost' IDENTIFIED BY 'Token@123';
+GRANT ALL PRIVILEGES ON market_arpan.* TO 'sumit'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
