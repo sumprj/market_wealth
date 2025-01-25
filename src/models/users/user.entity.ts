@@ -4,7 +4,7 @@ import {GlobalEntity } from '../global/global.entity';
 
 @Entity('user')
 export class User extends GlobalEntity {
-  @Column({ name: 'username' })
+  @Column({ name: 'username', unique: true })
   username: string;
 
   @Column({ name: 'password' })
@@ -22,9 +22,9 @@ export class User extends GlobalEntity {
   @Column({ name: 'birth_date', type: 'datetime' })
   birthDate: Date;
 
-  @Column({ name: 'salary', type: 'float' })
+  @Column({ name: 'salary', type: 'float', nullable: true })
   salary: number;
 
-  @Column({ name: 'last_login', type: 'datetime' })
+  @Column({ name: 'last_login', type: 'datetime', nullable: true })
   lastLogin: Date;
 }

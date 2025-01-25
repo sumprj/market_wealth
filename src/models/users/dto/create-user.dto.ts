@@ -1,9 +1,7 @@
-import { IsString, IsEmail, IsNotEmpty, IsDate, IsNumber, MinLength, IsAlphanumeric } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsString, IsEmail, IsNotEmpty, IsDate, IsNumber, MinLength, IsAlphanumeric, IsOptional } from 'class-validator';
 
-/**
- * @TDOD Fix error src/models/users/user.controller.ts:23:40 - error TS2345: Argument of type 'CreateUserDto' is not assignable to parameter of type 'User'.
-  Type 'CreateUserDto' is missing the following properties from type 'User': createdDate, hasId, save, remove, update, and 3 more.
- */
+
 export class CreateUserDto {
     @IsString()
     @IsNotEmpty()
@@ -27,8 +25,10 @@ export class CreateUserDto {
     gender: string;
 
     @IsDate()
+    @Type(() => Date) // This will convert the value into a Date instance
     birthDate: Date;
 
     @IsNumber()
-    salary: number;
+    @IsOptional()
+    salary?: number;
 }
