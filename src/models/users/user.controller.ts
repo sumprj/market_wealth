@@ -74,7 +74,8 @@ export class UserController {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    return this.userService.generateAuthToken(user);
+    const token =  await this.userService.generateAuthToken(user);
+    return { token };
   }
 
 
