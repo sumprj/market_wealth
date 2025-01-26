@@ -33,12 +33,22 @@ export class UserService {
     user.username = createUserDto.username;
     user.password = hashPassword(createUserDto.password);
     
-    const existingUser = await this.userRepository.findOne({ where: { username: createUserDto.username } });
+    // Update query to add check for duplicate email also
+    const existingEmail = await this.userRepository.findOne({ where: { email: createUserDto.email } });
+    if (existingEmail) {
+      console.log('Existing Email Error thrown');
+      throw new BadRequestException('Email already exists');
+    }
+    const existingUser = await this.userRepository.findOne({ where: { username: createUserDto.username } }); 
     if (existingUser) {
       throw new BadRequestException('Username already exists');
     }
 
-    return this.userRepository.save(user);
+    
+
+    const userSavedData = await this.userRepository.save(user);
+    delete userSavedData.password;
+    return userSavedData;
   }
 
   async findAll(): Promise<User[]> {
@@ -64,6 +74,7 @@ export class UserService {
 
   // Validate the provided password
   async validatePassword(user: User, password: string): Promise<boolean> {
+    console.log('COmpare Password: ', user, password);
     return compare(password, user.password);  // compare password with hashed value in DB
   }
 

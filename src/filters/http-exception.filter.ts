@@ -21,8 +21,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest();
 
-    const status = exception.getStatus();
-    const errorResponse = exception.getResponse();
+    //console.log(response);
+    const status = exception.getStatus
+      ? exception.getStatus()
+      : 500; // Default to 500 if it's not an HttpException
+    const errorResponse = exception.getResponse
+      ? exception.getResponse()
+      : { message: 'Internal Server Error', error: 'Internal Server Error' };
 
     // Log the error using Winston
     logger.error(`Exception: ${JSON.stringify(errorResponse)}`);

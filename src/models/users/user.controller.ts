@@ -33,7 +33,7 @@ export class UserController {
       return await this.userService.createUser(createUserDto);
     } catch (error) {
       // Handle known errors here (like duplicate username, etc.)
-      if (error instanceof ValidationError) {
+      if (error instanceof ValidationError || error instanceof BadRequestException) {
         throw new BadRequestException(error.message);
       }
       // Re-throw unexpected errors

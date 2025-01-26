@@ -4,12 +4,10 @@ import { IsUsernameOrEmailConstraint } from '../../../validators/is-username-or-
 export class SignInDto {
   @IsOptional()
   @IsString()
-  @IsNotEmpty()
   username?: string;
 
   @IsOptional()
   @IsEmail()
-  @IsNotEmpty()
   email?: string;
 
   @IsString()
