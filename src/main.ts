@@ -13,7 +13,12 @@ async function bootstrap() {
   // Apply global exception filter
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  await app.listen(3000);
+  app.enableCors({
+    origin: 'http://localhost:3000', // Replace with your frontend URL
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true, // If you're using cookies
+  });
+  await app.listen(5000);
 }
 
 bootstrap();
