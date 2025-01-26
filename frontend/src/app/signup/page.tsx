@@ -1,15 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  Container,
-  TextField,
-  Button,
-  Typography,
-  Box,
-  Grid,
-  CircularProgress,
-} from '@mui/material';
+import { Container, TextField, Button, Typography, Box, Grid, CircularProgress } from '@mui/material';
 import { styled } from '@mui/system';
 
 // Styling for the container and form elements
@@ -18,7 +10,7 @@ const FormContainer = styled(Box)({
   justifyContent: 'center',
   alignItems: 'center',
   height: '100vh',
-  background: 'linear-gradient(120deg, #ff7e5f, #feb47b)', // Gradient from pink to orange
+  background: 'linear-gradient(120deg, #ff7e5f, #feb47b)',  // Gradient from pink to orange
   backgroundSize: 'cover',
   backgroundAttachment: 'fixed',
   boxSizing: 'border-box',
@@ -80,17 +72,16 @@ const Signup = () => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [passwordError, setPasswordError] = useState('Default');
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     if (e.target.name === 'confirmPassword') {
       setPasswordError(''); // Reset error when typing in the confirm password field
     }
-    setError(''); // Reset general error when typing
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -103,41 +94,29 @@ const Signup = () => {
       return;
     }
 
-    // Check for empty fields
-    for (const key in formData) {
-      if (formData[key].trim() === '') {
-        setError('All fields are required.');
-        setLoading(false);
-        return;
-      }
-    }
-
     try {
       const response = await fetch('http://localhost:5000/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+          name: formData.name,
+          email: formData.email,
+          gender: formData.gender,
+          birthDate: formData.birthDate,
+        }),
       });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || 'Failed to submit data');
+        throw new Error('Failed to submit data');
       }
 
       alert('Signup successful');
-      setFormData({
-        username: '',
-        password: '',
-        confirmPassword: '',
-        name: '',
-        email: '',
-        gender: '',
-        birthDate: '',
-      });
     } catch (err) {
-      setError(err.message);
+      setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -153,33 +132,136 @@ const Signup = () => {
 
         <form noValidate autoComplete="off" onSubmit={handleSubmit}>
           <Grid container spacing={2}>
-            {Object.keys(formData).map((field, index) => (
-              <Grid item xs={12} key={index}>
-                <TextField
-                  fullWidth
-                  label={
-                    field === 'birthDate'
-                      ? 'Birth Date'
-                      : field === 'confirmPassword'
-                      ? 'Confirm Password'
-                      : field.charAt(0).toUpperCase() + field.slice(1)
-                  }
-                  type={field.includes('password') ? 'password' : field === 'birthDate' ? 'date' : 'text'}
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  name={field}
-                  value={formData[field]}
-                  onChange={handleChange}
-                  InputLabelProps={{
-                    style: { color: '#4B0082' },
-                  }}
-                  InputProps={{
-                    style: { borderRadius: '25px' },
-                  }}
-                />
-              </Grid>
-            ))}
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Full Name"
+                variant="outlined"
+                margin="normal"
+                required
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                InputLabelProps={{
+                  style: { color: '#4B0082' },
+                }}
+                InputProps={{
+                  style: { borderRadius: '25px' },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Email"
+                type="email"
+                variant="outlined"
+                margin="normal"
+                required
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                InputLabelProps={{
+                  style: { color: '#4B0082' },
+                }}
+                InputProps={{
+                  style: { borderRadius: '25px' },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Username"
+                variant="outlined"
+                margin="normal"
+                required
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                InputLabelProps={{
+                  style: { color: '#4B0082' },
+                }}
+                InputProps={{
+                  style: { borderRadius: '25px' },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Password"
+                type="password"
+                variant="outlined"
+                margin="normal"
+                required
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                InputLabelProps={{
+                  style: { color: '#4B0082' },
+                }}
+                InputProps={{
+                  style: { borderRadius: '25px' },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Confirm Password"
+                type="password"
+                variant="outlined"
+                margin="normal"
+                required
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                InputLabelProps={{
+                  style: { color: '#4B0082' },
+                }}
+                InputProps={{
+                  style: { borderRadius: '25px' },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Gender"
+                variant="outlined"
+                margin="normal"
+                required
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                InputLabelProps={{
+                  style: { color: '#4B0082' },
+                }}
+                InputProps={{
+                  style: { borderRadius: '25px' },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Birth Date"
+                type="date"
+                variant="outlined"
+                margin="normal"
+                required
+                name="birthDate"
+                value={formData.birthDate}
+                onChange={handleChange}
+                InputLabelProps={{
+                  style: { color: '#4B0082' },
+                }}
+                InputProps={{
+                  style: { borderRadius: '25px' },
+                }}
+              />
+            </Grid>
             <Grid item xs={12}>
               <StyledButton type="submit" fullWidth disabled={loading}>
                 {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign Up'}
