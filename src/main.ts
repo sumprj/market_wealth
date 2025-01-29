@@ -3,6 +3,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './filters/http-exception.filter'; // Import the filter
 import { ValidationPipe } from '@nestjs/common';
+import { JwtAuthGuard } from './auth/jwt -auth-guard';
+import { JwtService } from '@nestjs/jwt';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,6 +20,10 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true, // If you're using cookies
   });
+
+  const jwtService = app.get(JwtService);
+  app.useGlobalGuards(new JwtAuthGuard(jwtService));
+
   await app.listen(5000);
 }
 

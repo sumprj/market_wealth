@@ -5,6 +5,7 @@ import { UserService } from './user.service';
 import { ValidationError } from '../errors/validation.error'; // Import custom errors if necessary
 import { SignInDto } from 'src/models/users/dto/sign-in.dto';
 
+
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -27,7 +28,7 @@ export class UserController {
     return user;
   }
 
-  @Post()
+  @Post('register')
   async create(@Body() createUserDto: CreateUserDto) {
     try {
       return await this.userService.createUser(createUserDto);
@@ -59,7 +60,7 @@ export class UserController {
     return await this.userService.removeUser(id);
   }
 
-  @Post('sign-in')
+  @Post('login')
   async signIn(@Body() signInDto: SignInDto) {
     const { email, username, password } = signInDto;
 

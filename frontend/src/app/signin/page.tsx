@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Container, TextField, Button, Typography, Box, Grid, CircularProgress } from '@mui/material';
 import { styled } from '@mui/system';
 
@@ -60,6 +61,7 @@ const StyledButton = styled(Button)({
 });
 
 const Signin = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -91,7 +93,7 @@ const Signin = () => {
       if (formData.username) requestBody.username = formData.username;
       if (formData.email) requestBody.email = formData.email;
 
-      const response = await fetch('http://localhost:5000/users/sign-in', {
+      const response = await fetch('http://localhost:5000/users/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -105,8 +107,8 @@ const Signin = () => {
       }
 
       const data = await response.json();
-      alert(`Sign-in successful. Token: ${data.token}`);
       localStorage.setItem('accessToken', data.token);
+      router.push('/home'); // Redirect to the home page
     } catch (err: any) {
       setError(err.message || 'Something went wrong. Please try again.');
     } finally {
