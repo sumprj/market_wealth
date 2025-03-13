@@ -1,0 +1,83 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © sumit2016prajapati
+
+//@version=6
+strategy("Pair Track", overlay=true, fill_orders_on_standard_ohlc = true)
+import TradingView/ta/7
+import TradingView/Strategy/3
+
+
+bool takeTradeOnAllCandeles=false
+bool isCurrentCandleRed = close < open
+bool isCurrentCandleGreen = close > open
+bool isPreviousCandleRed = close[1] < open[1]
+bool isPreviousCandleGreen =  close[1] > open[1]
+float body = close - open
+float rsi = ta.rsi(close, 14)
+float atr = ta.atr(length = 14)
+float minBody = 50
+
+bool isRedGreenPairCondition = isPreviousCandleRed and isCurrentCandleGreen
+bool isGreenRedPairCondition = isPreviousCandleGreen and isCurrentCandleRed
+bool isCurrentCandleBigCandle = math.abs(body) > ta.sma(math.abs(close - open), 10) or body > 50
+bool isPreviousCandleBigCandle = math.abs(close[1] - open[1]) > ta.sma(math.abs(close - open), 10) or body > 50
+bool isPairValidForBuyTrade = isRedGreenPairCondition and (isPreviousCandleBigCandle or isCurrentCandleBigCandle)
+bool isPairValidForSellTrade = isGreenRedPairCondition and (isPreviousCandleBigCandle or isCurrentCandleBigCandle)
+
+if strategy.opentrades == 0
+    strategy.cancel_all()
+//order parameters
+quantity = 15 * 5
+bool donotTrade = false
+float stoploss = 0
+if timeframe.period == "3"
+    stoploss:= 10
+if timeframe.period == "15"
+    stoploss:= 20
+    if (hour(time) >= 14 and minute(time) >= 45) or (hour(time) == 9 and minute(time) == 15)
+        donotTrade := true
+if timeframe.period == "45" //1h
+    stoploss:= 25
+    if hour(time) == 9 or hour(time) == 15
+        donotTrade := true
+if timeframe.period == "60" //1h
+    stoploss:= 55
+    if hour(time) == 9 or hour(time) == 15
+        donotTrade := true
+if timeframe.period == "240" //4h
+    stoploss:= 30
+if timeframe.period == "1D"
+    stoploss:= 40
+if timeframe.period == "1W" 
+    stoploss:= 110
+if timeframe.period == "1M" 
+    stoploss:= 250
+ema = ta.ema(close, 5)
+longCondition = takeTradeOnAllCandeles or (not donotTrade and  isPairValidForBuyTrade and ((rsi < 70 and rsi > 55) or (rsi < 45 and rsi > 29)) and atr > 110)
+if (not donotTrade and longCondition)
+    stopLimit = high + 1//(high + high[1]) / 2
+    limit = (low + low[1]) / 2
+    stopLoss = Strategy.priceToTicks(stoploss)
+    target = (rsi < 39) ? stopLoss * 6 :  stopLoss * 3
+    strategy.cancel_all()
+    strategy.entry("5_EMA_BUY_1", strategy.long, qty = quantity, stop = stopLimit, comment = '')//candleClose - requiredGap)//
+    //strategy.entry("5_EMA_BUY_2", strategy.long, qty = quantity, limit = limit, comment = '')//candleClose - requiredGap)//
+    strategy.exit("5_EMA_BUY_1", loss = stopLoss, profit = target)
+    alert('Buy '+ 'Stop Limit: ' + str.tostring(stopLimit) + 'Stop Loss: '+ str.tostring(stoploss) + 'Target: ' + str.tostring(stoploss*3))
+    //strategy.exit("5_EMA_BUY_2", loss = stopLoss*1.5, profit = stopLoss * 4)
+
+shortCondition = takeTradeOnAllCandeles or (not donotTrade and isPairValidForSellTrade and rsi > 25 and atr > 80)
+if (not donotTrade and shortCondition)
+    stopLimit = low - 2 //(low + low[1]) / 2
+    limit = (high + high[1]) / 2
+    stopLoss = Strategy.priceToTicks(stoploss)
+    target = stopLoss * 3
+    strategy.cancel_all()
+    strategy.entry("5_EMA_SELL_1", strategy.short, qty = quantity, stop = stopLimit, comment = '')//candleClose - requiredGap)//
+    //strategy.entry("5_EMA_SELL_2", strategy.short, qty = quantity, limit = limit, comment = '')//candleClose - requiredGap)//
+    strategy.exit("5_EMA_SELL_1", loss = stopLoss, profit = target)
+    //strategy.exit("5_EMA_SELL_2", loss = stopLoss*1.5, profit = stopLoss * 4)
+    alert('Sell '+ 'Stop Limit: ' + str.tostring(stopLimit) + 'Stop Loss: '+ str.tostring(stoploss) + 'Target: ' + str.tostring(stoploss*3))
+
+
+//plot(buyLine, )

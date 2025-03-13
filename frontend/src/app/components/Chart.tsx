@@ -30,8 +30,24 @@ const Chart: React.FC<ChartProps> = ({ data, supportLevels, resistanceLevels }) 
         vertLine: { color: "#000" },
         horzLine: { color: "#000" },
       },
-      priceScale: { borderColor: "#ccc" },
+      priceScale: {
+        borderColor: "#ccc",
+        autoScale: true,
+        scaleMargins: { top: 0.2, bottom: 0.2 },
+      },
       timeScale: { borderColor: "#ccc" },
+    });
+    
+    chart.applyOptions({
+      handleScale: {
+        axisPressedMouseMove: true,
+        pinch: true,
+        mouseWheel: true,
+      },
+      handleScroll: {
+        vertTouchDrag: true,
+        mouseWheel: true,
+      },
     });
 
     const candlestickSeries = chart.addCandlestickSeries({

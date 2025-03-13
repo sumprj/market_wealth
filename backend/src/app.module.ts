@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './models/users/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { InstrumentPricesModule } from './models/instrument-prices/instrument-prices.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       synchronize: true,
       logging:true
     }),
-    UserModule
+    UserModule,
+    InstrumentPricesModule
   ],
   controllers: [AppController],
   providers: [AppService],

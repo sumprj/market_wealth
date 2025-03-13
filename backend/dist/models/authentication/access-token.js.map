@@ -1,0 +1,1 @@
+{"version":3,"file":"access-token.js","sourceRoot":"","sources":["../../../src/models/authentication/access-token.ts"],"names":[],"mappings":";;AASS,oCAAY;AAPrB,iCAAiC;AAEjC,SAAS,YAAY,CAAC,QAAgB;IACrC,MAAM,UAAU,GAAG,EAAE,CAAC;IACtB,OAAO,MAAM,CAAC,QAAQ,CAAC,QAAQ,EAAE,UAAU,CAAC,CAAC;AAC9C,CAAC"}
