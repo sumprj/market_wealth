@@ -1,4 +1,4 @@
-import { Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { Multer } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { InstrumentPricesService } from './instrument-prices.service';
@@ -11,13 +11,13 @@ export class InstrumentPricesController {
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file: Multer.File, date: Date): Promise<string> {
+  async uploadFile(@UploadedFile() file: Multer.File, @Body('date') date: Date): Promise<string> {
     const csvData = file.buffer.toString('utf-8');
     const { data } = parse(csvData, { header: true, skipEmptyLines: true });
-    const formattedData = formatInstrumentData(data);
-    
+    const formattedData = formatInstrumentData(data, date);
+    console.log(data, date);
     // console.log(data);
-    await this.pricesService.savePrices(formattedData, date);
+    await this.pricesService.savePrices(formattedData);
     return 'File uploaded and prices saved';
   }
 }

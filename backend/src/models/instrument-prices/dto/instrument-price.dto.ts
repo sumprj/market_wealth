@@ -5,5 +5,5 @@ export class InstrumentPriceDto {
     low: number;
     close: number;
     current_price: number;
-    datetime: Date;
+    date: Date;
   }

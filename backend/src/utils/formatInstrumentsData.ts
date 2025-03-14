@@ -1,6 +1,6 @@
 import { InstrumentPriceDto } from '../models/instrument-prices/dto/instrument-price.dto';  
 
-export function formatInstrumentData(rawData: any[]): any[] {
+export function formatInstrumentData(rawData: any[], date: Date): any[] {
     return rawData.map((item) => {
       return {
         symbol: item['SYMBOL \n']?.trim(),
@@ -17,7 +17,7 @@ export function formatInstrumentData(rawData: any[]): any[] {
         week_52_low: parseFloat(item['52W L \n']?.replace(/,/g, '')) || null,
         month_change_percent: parseFloat(item['30 D   %CHNG \n']?.replace(/,/g, '')) || null,
         year_change_percent: parseFloat(item['365 D % CHNG \n 11-Mar-2024']?.replace(/,/g, '')) || null,
-        datetime: new Date()
+        date: new Date(date)
       };
     });
   }
