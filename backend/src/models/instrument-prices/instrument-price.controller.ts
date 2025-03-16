@@ -15,8 +15,6 @@ export class InstrumentPricesController {
     const csvData = file.buffer.toString('utf-8');
     const { data } = parse(csvData, { header: true, skipEmptyLines: true });
     const formattedData = formatInstrumentData(data, date);
-    console.log(data, date);
-    // console.log(data);
     await this.pricesService.savePrices(formattedData);
     return 'File uploaded and prices saved';
   }
