@@ -9,6 +9,7 @@ import router from "next/router";
 export default function TechnicalDetails() {
   const [message, setMessage] = useState("");
   const [stocks, setStocks] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const token = localStorage.getItem("accessToken");
     if (!token) {
       router.push("/signin");
@@ -41,7 +42,22 @@ export default function TechnicalDetails() {
         console.error("Failed to fetch stock data", error);
       }
     };
+
+    const fetchRecommendations = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/technical-details/gapBuySellRecommendation", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setRecommendations(response.data.data);
+      } catch (error) {
+        console.error("Failed to fetch recommendations", error);
+      }
+    };
+    
     fetchStocks();
+    fetchRecommendations();
   }, []);
 
   return (
@@ -59,6 +75,60 @@ export default function TechnicalDetails() {
         </div>
         {message && <p className="mt-4 text-center text-red-500">{message}</p>}
       </div>
+      
+      <div className="max-w-xl mx-auto bg-white/30 backdrop-blur-lg p-6 mt-6 shadow-lg rounded-lg border border-white/40">
+  <h2 className="text-xl font-bold mb-4 text-center">Buy Recommendations</h2>
+  <table className="w-full border-collapse border border-gray-300">
+    <thead>
+      <tr className="bg-green-200">
+        <th className="border border-gray-300 px-4 py-2">Serial No.</th>
+        <th className="border border-gray-300 px-4 py-2">Buy</th>
+      </tr>
+    </thead>
+    <tbody>
+      {recommendations.buy && recommendations.buy.length > 0 ? (
+        recommendations.buy.map((buyStock, index) => (
+          <tr key={index} className="border border-gray-300">
+            <td className="border border-gray-300 px-4 py-2 text-center">{index + 1}</td>
+            <td className="border border-gray-300 px-4 py-2 text-center">{buyStock.name}</td>
+          </tr>
+        ))
+      ) : (
+        <tr>
+          <td className="border border-gray-300 px-4 py-2 text-center" colSpan="2">No Buy recommendations</td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</div>
+
+<div className="max-w-xl mx-auto bg-white/30 backdrop-blur-lg p-6 mt-6 shadow-lg rounded-lg border border-white/40 mt-6">
+  <h2 className="text-xl font-bold mb-4 text-center">Sell Recommendations</h2>
+  <table className="w-full border-collapse border border-gray-300">
+    <thead>
+      <tr className="bg-red-200">
+        <th className="border border-gray-300 px-4 py-2">Serial No.</th>
+        <th className="border border-gray-300 px-4 py-2">Sell</th>
+      </tr>
+    </thead>
+    <tbody>
+      {recommendations.sell && recommendations.sell.length > 0 ? (
+        recommendations.sell.map((sellStock, index) => (
+          <tr key={index} className="border border-gray-300">
+            <td className="border border-gray-300 px-4 py-2 text-center">{index + 1}</td>
+            <td className="border border-gray-300 px-4 py-2 text-center">{sellStock.name}</td>
+          </tr>
+        ))
+      ) : (
+        <tr>
+          <td className="border border-gray-300 px-4 py-2 text-center" colSpan="2">No Sell recommendations</td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</div>
+
+      
       <div className="max-w-xl mx-auto bg-white/30 backdrop-blur-lg p-6 mt-6 shadow-lg rounded-lg border border-white/40">
         <h2 className="text-xl font-bold mb-4 text-center">Stocks with Inside Candles</h2>
         <table className="w-full border-collapse border border-gray-300">

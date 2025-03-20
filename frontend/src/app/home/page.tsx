@@ -1,133 +1,37 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Box, Typography, CircularProgress, Card, CardContent, Avatar } from '@mui/material';
-import { styled } from '@mui/system';
-import Chart from '../components/Chart'; // Import Chart component
+import { useAuth } from '../../hooks/useAuth';
+import Navbar from '../../components/NavBar';
+import { useRouter } from 'next/navigation';
 
-// Styled components for consistent UI
-const PageContainer = styled(Box)({
-  minHeight: '100vh',
-  background: 'linear-gradient(120deg, #36d1dc, #5b86e5)',
-  padding: '2rem',
-  boxSizing: 'border-box',
-  position: 'relative',
-});
-
-const Header = styled(Typography)({
-  color: '#fff',
-  fontWeight: 'bold',
-  fontSize: '3rem',
-  textAlign: 'center',
-  marginBottom: '2rem',
-});
-
-const DataContainer = styled(Box)({
-  background: '#fff',
-  borderRadius: '15px',
-  padding: '2rem',
-  boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
-  marginBottom: '2rem',
-});
-
-// Styled user card
-const UserCard = styled(Card)({
-  position: 'absolute',
-  top: '1rem',
-  right: '1rem',
-  minWidth: '250px',
-  display: 'flex',
-  alignItems: 'center',
-  padding: '1rem',
-  borderRadius: '12px',
-  backgroundColor: '#ffffff',
-  boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)',
-});
-
-const Home = () => {
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      setLoading(true);
-      setError('');
-
-      try {
-        const token = localStorage.getItem('accessToken');
-        
-        const response = await fetch('http://localhost:5000/users/1', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch user data');
-        }
-
-        const data = await response.json();
-        setUserData(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
-  // Sample data for the chart
-  const sampleData = [
-    { time: new Date('2024-04-19').getTime() / 1000, open: 21861.5, high: 22179.55, low: 21777.65, close: 22147 },
-    // More data can be added following the same format...
-  ];
-  
-
-  const supportLevels = [22600, 22700, 23200];
-  const resistanceLevels = [22500, 22300, 22000];
+export default function HomePage() {
+  const { user } = useAuth();
+  const router = useRouter();
 
   return (
-    <PageContainer>
-      <Header>Market Arpan</Header>
+    <div className="flex flex-col items-center min-h-screen p-6 bg-gray-100">
+      <Navbar />
 
-      {loading && (
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
-          <CircularProgress />
-        </Box>
-      )}
+      <div className="mt-10 text-center">
+        <h2 className="text-2xl font-semibold">Welcome, {user.name || 'Trader'}!</h2>
+        <p className="text-gray-600 mt-2">Manage your instruments, prices, and technical details here.</p>
+      </div>
 
-      {error && (
-        <Typography color="error" textAlign="center">
-          {error}
-        </Typography>
-      )}
+      <div className="mt-8 space-x-6">
+        <button 
+          onClick={() => router.push('/manage-prices')}
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700 transition"
+        >
+          Manage Prices
+        </button>
 
-      {!loading && !error && userData && (
-        <>
-          {/* User Card on Top-Right */}
-          <UserCard>
-            <Avatar sx={{ width: 56, height: 56, marginRight: '1rem', backgroundColor: '#5b86e5' }}>
-              {userData.name.charAt(0)}
-            </Avatar>
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold">
-                {userData.name}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                {userData.email}
-              </Typography>
-            </CardContent>
-          </UserCard>
-
-          {/* Chart component */}
-          <DataContainer>
-            <Chart data={sampleData} supportLevels={supportLevels} resistanceLevels={resistanceLevels} />
-          </DataContainer>
-        </>
-      )}
-    </PageContainer>
+        <button 
+          onClick={() => router.push('/technicals')}
+          className="bg-green-600 text-white px-6 py-3 rounded-lg shadow hover:bg-green-700 transition"
+        >
+          Technicals
+        </button>
+      </div>
+    </div>
   );
-};
-
-export default Home;
+}

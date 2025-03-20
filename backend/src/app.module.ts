@@ -16,7 +16,7 @@ import { InstrumentPricesModule } from './models/instrument-prices/instrument-pr
       database: 'market_arpan',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
-      logging:true
+      logging:false
     }),
     UserModule,
     InstrumentPricesModule

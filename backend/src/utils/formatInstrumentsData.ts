@@ -7,7 +7,7 @@ export function formatInstrumentData(rawData: any[], date: Date): any[] {
         open: parseFloat(item['OPEN \n']?.replace(/,/g, '')) || null,
         high: parseFloat(item['HIGH \n']?.replace(/,/g, '')) || null,
         low: parseFloat(item['LOW \n']?.replace(/,/g, '')) || null,
-        close: parseFloat(item['PREV. CLOSE \n']?.replace(/,/g, '')) || null,
+        close: parseFloat(item['LTP \n']?.replace(/,/g, '')) || null,
         current_price: parseFloat(item['LTP \n']?.replace(/,/g, '')) || null,
         volume: parseInt(item['VOLUME \n(shares)']?.replace(/,/g, '')) || null,
         value_in_crores: parseFloat(item['VALUE \n (₹ Crores)']?.replace(/,/g, '')) || null,

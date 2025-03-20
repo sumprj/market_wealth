@@ -5,13 +5,13 @@ import { useRouter } from 'next/navigation';
 import { Container, TextField, Button, Typography, Box, Grid, CircularProgress } from '@mui/material';
 import { styled } from '@mui/system';
 
-// Styled components for consistent UI
+// Styled components for UI consistency
 const FormContainer = styled(Box)({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
   height: '100vh',
-  background: 'linear-gradient(120deg, #36d1dc, #5b86e5)', // Blue gradient
+  background: 'linear-gradient(120deg, #36d1dc, #5b86e5)',
   backgroundSize: 'cover',
   backgroundAttachment: 'fixed',
   boxSizing: 'border-box',
@@ -34,7 +34,7 @@ const FormBox = styled(Box)({
 const Title = styled(Typography)({
   color: '#003366',
   fontWeight: '700',
-  fontSize: '2.8rem',
+  fontSize: '2.5rem',
   textAlign: 'center',
   marginBottom: '1.5rem',
   letterSpacing: '1px',
@@ -60,7 +60,7 @@ const StyledButton = styled(Button)({
   },
 });
 
-const Signin = () => {
+const Signin: React.FC = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
     username: '',
@@ -79,36 +79,33 @@ const Signin = () => {
     setLoading(true);
     setError('');
 
-    // Ensure either username or email is provided
     if (!formData.username && !formData.email) {
-      setError('Please enter either Username or Email');
+      setError('Please enter either Username or Email.');
       setLoading(false);
       return;
     }
 
     try {
-      const requestBody: any = {
-        password: formData.password,
-      };
+      const requestBody: any = { password: formData.password };
       if (formData.username) requestBody.username = formData.username;
       if (formData.email) requestBody.email = formData.email;
 
       const response = await fetch('http://localhost:5000/users/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Sign-in failed');
-      }
-
       const data = await response.json();
+      console.log(data);
+
+      if (!response.ok) throw new Error(data.message || 'Sign-in failed');
+
+      // Store token and user ID
       localStorage.setItem('accessToken', data.token);
-      router.push('/home'); // Redirect to the home page
+      localStorage.setItem('userId', data.userId);
+
+      router.push('/home'); // Redirect to home
     } catch (err: any) {
       setError(err.message || 'Something went wrong. Please try again.');
     } finally {
@@ -134,12 +131,8 @@ const Signin = () => {
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
-                InputLabelProps={{
-                  style: { color: '#003366' },
-                }}
-                InputProps={{
-                  style: { borderRadius: '25px' },
-                }}
+                InputLabelProps={{ style: { color: '#003366' } }}
+                InputProps={{ style: { borderRadius: '25px' } }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -151,12 +144,8 @@ const Signin = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                InputLabelProps={{
-                  style: { color: '#003366' },
-                }}
-                InputProps={{
-                  style: { borderRadius: '25px' },
-                }}
+                InputLabelProps={{ style: { color: '#003366' } }}
+                InputProps={{ style: { borderRadius: '25px' } }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -170,12 +159,8 @@ const Signin = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                InputLabelProps={{
-                  style: { color: '#003366' },
-                }}
-                InputProps={{
-                  style: { borderRadius: '25px' },
-                }}
+                InputLabelProps={{ style: { color: '#003366' } }}
+                InputProps={{ style: { borderRadius: '25px' } }}
               />
             </Grid>
             <Grid item xs={12}>

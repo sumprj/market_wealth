@@ -76,7 +76,7 @@ export class UserController {
     }
 
     const token =  await this.userService.generateAuthToken(user);
-    return { token };
+    return { token, userId: user.id };
   }
 
 
